@@ -1,5 +1,7 @@
 import { Router } from "express";
 import prisma from "../prisma/client.js";
+import verifyToken  from "../middleware/verifyToken.js";
+
 
 const router = Router();
 
@@ -38,7 +40,7 @@ router.get("/", async (req, res, next) => {
 // -------------------------------------------------------------
 
 // POST /api/threads
-router.post("/", async (req, res, next) => {
+router.post("/", verifyToken,async (req, res, next) => {
   try {
     const { title, body, authorId } = req.body ?? {};
     if (!title || !body) {
@@ -54,7 +56,7 @@ router.post("/", async (req, res, next) => {
 });
 
 // PUT /api/threads/:id
-router.put("/:id", async (req, res, next) => {
+router.put("/:id", verifyToken,async (req, res, next) => {
   try {
     const id = Number(req.params.id);
     const { title, body } = req.body ?? {};
@@ -69,7 +71,7 @@ router.put("/:id", async (req, res, next) => {
 });
 
 // DELETE /api/threads/:id
-router.delete("/:id", async (req, res, next) => {
+router.delete("/:id", verifyToken,async (req, res, next) => {
   try {
     const id = Number(req.params.id);
     await prisma.thread.delete({ where: { id } });
